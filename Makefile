@@ -68,13 +68,10 @@ proto:
 		--entrypoint build/bin/compile_protos.sh \
 		onosproject/protoc-go:stable
 
-image: # @HELP build dragonboat-raft-replica Docker image
+images: # @HELP build dragonboat-raft-replica Docker image
 	@go mod vendor
 	docker build . -f build/docker/Dockerfile -t atomix/dragonboat-raft-replica:${ATOMIX_DRAGONBOAT_RAFT_NODE_VERSION}
 	@rm -r vendor
-
-push: # @HELP push dragonboat-raft-replica Docker image
-	docker push atomix/dragonboat-raft-replica:${ATOMIX_DRAGONBOAT_RAFT_NODE_VERSION}
 
 clean: # @HELP clean build files
 clean:
