@@ -50,6 +50,7 @@ test: # @HELP run the unit tests and source code validation
 test: build license_check linters
 	go test github.com/atomix/dragonboat-raft-replica/...
 
+
 coverage: # @HELP generate unit test coverage data
 coverage: build linters license_check
 	go test github.com/atomix/dragonboat-raft-replica/pkg/... -coverprofile=coverage.out.tmp -covermode=count

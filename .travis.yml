@@ -30,5 +30,4 @@ jobs:
         - sh build/bin/trigger-docs-travis $TRAVIS_API_TOKEN
     - stage: test
       script:
-        - make test
         - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then bash ./build/bin/push-images; fi'
