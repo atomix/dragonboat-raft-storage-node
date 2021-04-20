@@ -16,7 +16,7 @@ package storage
 
 import (
 	"context"
-	"github.com/atomix/go-framework/pkg/atomix/protocol/rsm"
+	"github.com/atomix/go-framework/pkg/atomix/storage/protocol/rsm"
 	streams "github.com/atomix/go-framework/pkg/atomix/stream"
 	"github.com/gogo/protobuf/proto"
 	"github.com/lni/dragonboat/v3"

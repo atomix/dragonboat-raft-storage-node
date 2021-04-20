@@ -19,7 +19,7 @@ import (
 	"github.com/atomix/dragonboat-raft-storage-node/pkg/storage/config"
 	"github.com/atomix/go-framework/pkg/atomix/cluster"
 	"github.com/atomix/go-framework/pkg/atomix/errors"
-	protocol "github.com/atomix/go-framework/pkg/atomix/protocol/rsm"
+	protocol "github.com/atomix/go-framework/pkg/atomix/storage/protocol/rsm"
 	"github.com/lni/dragonboat/v3"
 	raftconfig "github.com/lni/dragonboat/v3/config"
 	"github.com/lni/dragonboat/v3/raftio"

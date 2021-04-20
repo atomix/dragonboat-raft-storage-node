@@ -16,32 +16,67 @@ package main
 
 import (
 	"fmt"
-	driver "github.com/atomix/go-framework/pkg/atomix/driver/protocol/rsm"
+	"github.com/atomix/go-framework/pkg/atomix/cluster"
+	"github.com/atomix/go-framework/pkg/atomix/driver"
+	"github.com/atomix/go-framework/pkg/atomix/driver/proxy"
+	"github.com/atomix/go-framework/pkg/atomix/driver/proxy/rsm"
+	"github.com/atomix/go-framework/pkg/atomix/driver/proxy/rsm/counter"
+	"github.com/atomix/go-framework/pkg/atomix/driver/proxy/rsm/election"
+	"github.com/atomix/go-framework/pkg/atomix/driver/proxy/rsm/indexedmap"
+	"github.com/atomix/go-framework/pkg/atomix/driver/proxy/rsm/leader"
+	"github.com/atomix/go-framework/pkg/atomix/driver/proxy/rsm/list"
+	"github.com/atomix/go-framework/pkg/atomix/driver/proxy/rsm/lock"
+	"github.com/atomix/go-framework/pkg/atomix/driver/proxy/rsm/log"
+	_map "github.com/atomix/go-framework/pkg/atomix/driver/proxy/rsm/map"
+	"github.com/atomix/go-framework/pkg/atomix/driver/proxy/rsm/set"
+	"github.com/atomix/go-framework/pkg/atomix/driver/proxy/rsm/value"
 	"github.com/atomix/go-framework/pkg/atomix/logging"
 	"os"
 	"os/signal"
+	"strconv"
+)
+
+const (
+	driverNodeEnv      = "ATOMIX_DRIVER_NODE"
+	driverNamespaceEnv = "ATOMIX_DRIVER_NAMESPACE"
+	driverNameEnv      = "ATOMIX_DRIVER_NAME"
+	driverPortEnv      = "ATOMIX_DRIVER_PORT"
 )
 
 func main() {
 	logging.SetLevel(logging.DebugLevel)
 
-	// Create an Atomix node
-	node := driver.NewNode()
+	memberID := fmt.Sprintf("%s.%s", os.Getenv(driverNameEnv), os.Getenv(driverNamespaceEnv))
+	nodeID := os.Getenv(driverNodeEnv)
+	port, err := strconv.Atoi(os.Getenv(driverPortEnv))
+	if err != nil {
+		panic(err)
+	}
 
-	// Register primitives on the Atomix node
-	driver.RegisterCounterProxy(node)
-	driver.RegisterElectionProxy(node)
-	driver.RegisterIndexedMapProxy(node)
-	driver.RegisterLockProxy(node)
-	driver.RegisterLogProxy(node)
-	driver.RegisterLeaderLatchProxy(node)
-	driver.RegisterListProxy(node)
-	driver.RegisterMapProxy(node)
-	driver.RegisterSetProxy(node)
-	driver.RegisterValueProxy(node)
+	provider := func(c cluster.Cluster) proxy.Protocol {
+		p := rsm.NewProtocol(c)
+		counter.Register(p)
+		election.Register(p)
+		indexedmap.Register(p)
+		lock.Register(p)
+		log.Register(p)
+		leader.Register(p)
+		list.Register(p)
+		_map.Register(p)
+		set.Register(p)
+		value.Register(p)
+		return p
+	}
+
+	// Create a Raft driver
+	d := driver.NewDriver(
+		provider,
+		driver.WithDriverID(memberID),
+		driver.WithNodeID(nodeID),
+		driver.WithPort(port))
 
 	// Start the node
-	if err := node.Start(); err != nil {
+	if err := d.Start(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
@@ -52,7 +87,7 @@ func main() {
 	<-ch
 
 	// Stop the node after an interrupt
-	if err := node.Stop(); err != nil {
+	if err := d.Stop(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
