@@ -91,7 +91,7 @@ func (p *Protocol) Start(c cluster.Cluster, registry *protocol.Registry) error {
 	clientMembers := make(map[uint64]string)
 	serverMembers := make(map[uint64]string)
 	for i, replica := range replicas {
-		clientMembers[uint64(i+1)] = fmt.Sprintf("%s:%d", replica.Host, replica.Port)
+		clientMembers[uint64(i+1)] = string(replica.ID)
 		serverMembers[uint64(i+1)] = fmt.Sprintf("%s:%d", replica.Host, replica.GetPort("raft"))
 		if replica.ID == member.ID {
 			nodeID = uint64(i + 1)
