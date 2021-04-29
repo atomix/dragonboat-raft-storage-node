@@ -16,9 +16,9 @@ package storage
 
 import (
 	"encoding/binary"
-	"github.com/atomix/go-framework/pkg/atomix/cluster"
-	protocol "github.com/atomix/go-framework/pkg/atomix/storage/protocol/rsm"
-	"github.com/atomix/go-framework/pkg/atomix/stream"
+	"github.com/atomix/atomix-go-framework/pkg/atomix/cluster"
+	protocol "github.com/atomix/atomix-go-framework/pkg/atomix/storage/protocol/rsm"
+	"github.com/atomix/atomix-go-framework/pkg/atomix/stream"
 	"github.com/gogo/protobuf/proto"
 	"github.com/lni/dragonboat/v3/statemachine"
 	"io"
