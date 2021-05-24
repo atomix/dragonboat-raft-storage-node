@@ -23,8 +23,6 @@ import (
 	"time"
 )
 
-const clientTimeout = 15 * time.Second
-
 // newClient returns a new Raft consensus protocol client
 func newClient(clusterID uint64, nodeID uint64, node *dragonboat.NodeHost, members map[uint64]string, streams *streamManager) *Partition {
 	return &Partition{
@@ -76,8 +74,6 @@ func (c *Partition) ExecuteCommand(ctx context.Context, input []byte, stream str
 	if err != nil {
 		return err
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), clientTimeout)
-	defer cancel()
 	if _, err := c.node.SyncPropose(ctx, c.node.GetNoOPSession(c.clusterID), bytes); err != nil {
 		stream.Close()
 		return err
@@ -90,8 +86,6 @@ func (c *Partition) ExecuteQuery(ctx context.Context, input []byte, stream strea
 		value:  input,
 		stream: stream,
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), clientTimeout)
-	defer cancel()
 	if _, err := c.node.SyncRead(ctx, c.clusterID, query); err != nil {
 		stream.Close()
 		return err

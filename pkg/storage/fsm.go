@@ -37,7 +37,6 @@ func newStateMachine(cluster cluster.Cluster, partitionID protocol.PartitionID, 
 }
 
 type StateMachine struct {
-	node      string
 	partition protocol.PartitionID
 	state     *protocol.Manager
 	streams   *streamManager
